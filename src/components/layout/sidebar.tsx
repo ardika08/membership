@@ -24,6 +24,7 @@ import { Logo } from '@/components/layout/logo'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useAuth, useLogout } from '@/hooks/use-auth'
+import { isAbsoluteUrl, publicUrl } from '@/config'
 import { cn } from '@/lib/utils'
 import { useUiStore } from '@/store/uiStore'
 
@@ -48,7 +49,7 @@ const MEMBER_NAV: { title: string; items: NavItem[] }[] = [
   {
     title: 'Lainnya',
     items: [
-      { to: '/', label: 'Katalog Produk', icon: Store, end: true },
+      { to: publicUrl('/'), label: 'Katalog Produk', icon: Store, end: true },
       { to: '/profile', label: 'Pengaturan', icon: Settings },
     ],
   },
@@ -70,7 +71,7 @@ const ADMIN_NAV: { title: string; items: NavItem[] }[] = [
   {
     title: 'Lainnya',
     items: [
-      { to: '/', label: 'Lihat Katalog', icon: Store, end: true },
+      { to: publicUrl('/'), label: 'Lihat Katalog', icon: Store, end: true },
       { to: '/profile', label: 'Pengaturan', icon: Settings },
     ],
   },
@@ -89,41 +90,57 @@ function SidebarNav({ variant }: { variant: 'member' | 'admin' }) {
           </p>
           <ul className="space-y-0.5">
             {group.items.map((item) => (
-              <li key={item.to}>
-                <NavLink
-                  to={item.to}
-                  end={item.end}
-                  onClick={() => setSidebarOpen(false)}
-                  className={({ isActive }) =>
-                    cn(
-                      'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200',
-                      isActive
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-muted-foreground hover:bg-accent hover:text-foreground',
-                    )
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      {isActive && (
-                        <motion.span
-                          layoutId={`sidebar-indicator-${variant}`}
-                          className="bg-primary absolute top-1/2 left-0 h-5 w-1 -translate-y-1/2 rounded-r-full"
-                          transition={{
-                            type: 'spring',
-                            stiffness: 380,
-                            damping: 30,
-                          }}
+              <li key={item.label}>
+                {isAbsoluteUrl(item.to) ? (
+                  <a
+                    href={item.to}
+                    onClick={() => setSidebarOpen(false)}
+                    className={cn(
+                      'group text-muted-foreground hover:bg-accent hover:text-foreground flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200',
+                    )}
+                  >
+                    <item.icon
+                      className="size-[18px] shrink-0"
+                      strokeWidth={1.8}
+                    />
+                    <span className="truncate">{item.label}</span>
+                  </a>
+                ) : (
+                  <NavLink
+                    to={item.to}
+                    end={item.end}
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) =>
+                      cn(
+                        'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200',
+                        isActive
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-muted-foreground hover:bg-accent hover:text-foreground',
+                      )
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        {isActive && (
+                          <motion.span
+                            layoutId={`sidebar-indicator-${variant}`}
+                            className="bg-primary absolute top-1/2 left-0 h-5 w-1 -translate-y-1/2 rounded-r-full"
+                            transition={{
+                              type: 'spring',
+                              stiffness: 380,
+                              damping: 30,
+                            }}
+                          />
+                        )}
+                        <item.icon
+                          className="size-[18px] shrink-0"
+                          strokeWidth={isActive ? 2.2 : 1.8}
                         />
-                      )}
-                      <item.icon
-                        className="size-[18px] shrink-0"
-                        strokeWidth={isActive ? 2.2 : 1.8}
-                      />
-                      <span className="truncate">{item.label}</span>
-                    </>
-                  )}
-                </NavLink>
+                        <span className="truncate">{item.label}</span>
+                      </>
+                    )}
+                  </NavLink>
+                )}
               </li>
             ))}
           </ul>

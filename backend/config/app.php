@@ -1,5 +1,12 @@
 <?php
 
+/* Daftar origin frontend — dipisah koma di FRONTEND_URL, entri pertama
+ * adalah domain utama (member area) untuk redirect Mayar & CORS R2. */
+$frontendUrls = array_values(array_filter(array_map(
+    static fn ($url) => rtrim(trim((string) $url), '/'),
+    explode(',', (string) env('FRONTEND_URL', 'http://localhost:5173')),
+)));
+
 return [
 
     /*
@@ -62,9 +69,17 @@ return [
     | Origin aplikasi frontend (React). Dipakai untuk CORS, redirectUrl
     | invoice Mayar, dan tombol "kembali ke aplikasi" di halaman sandbox.
     |
+    | Boleh berisi beberapa domain, dipisah koma — entri PERTAMA adalah
+    | domain utama (member area) yang dipakai untuk redirect pembayaran
+    | Mayar dan CORS bucket R2. Contoh setup multi-domain:
+    |
+    |   FRONTEND_URL=https://member.grafistadigital.com,https://grafistadigital.com
+    |
     */
 
-    'frontend_url' => rtrim((string) env('FRONTEND_URL', 'http://localhost:5173'), '/'),
+    'frontend_urls' => $frontendUrls,
+
+    'frontend_url' => $frontendUrls[0] ?? 'http://localhost:5173',
 
     /*
     |--------------------------------------------------------------------------

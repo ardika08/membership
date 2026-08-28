@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import { getErrorMessage } from '@/api/client'
@@ -27,6 +27,7 @@ export function useAuth() {
 export function useLogin() {
   const setSession = useAuthStore((s) => s.setSession)
   const navigate = useNavigate()
+  const location = useLocation()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -35,9 +36,14 @@ export function useLogin() {
       setSession(data)
       queryClient.clear()
       toast.success(`Selamat datang kembali, ${data.user.name.split(' ')[0]}!`)
-      navigate(data.user.role === 'admin' ? '/admin/dashboard' : '/dashboard', {
-        replace: true,
-      })
+      // Kembali ke halaman asal (mis. halaman produk) jika ada,
+      // selain itu ke dashboard sesuai role.
+      const from = (location.state as { from?: { pathname?: string } } | null)
+        ?.from?.pathname
+      navigate(
+        from ?? (data.user.role === 'admin' ? '/admin/dashboard' : '/dashboard'),
+        { replace: true },
+      )
     },
     onError: (error) => {
       toast.error('Gagal masuk', { description: getErrorMessage(error) })

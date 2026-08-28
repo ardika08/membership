@@ -30,7 +30,7 @@ class ApplyR2Cors extends Command
         }
 
         $origins = array_values(array_unique(array_filter([
-            rtrim((string) config('app.frontend_url'), '/'),
+            ...(config('app.frontend_urls') ?? []),
             'http://localhost:5173',
             'http://127.0.0.1:5173',
             ...array_map('trim', $this->option('origin')),

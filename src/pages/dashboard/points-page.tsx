@@ -7,7 +7,6 @@ import {
   TrendingUp,
   type LucideIcon,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
 
 import { PageHeader } from '@/components/layout/page-header'
 import { PageTransition } from '@/components/layout/page-transition'
@@ -29,7 +28,9 @@ import {
   POINTS_MAX_REDEEM_PERCENT,
   POINTS_MIN_REDEEM,
   POINTS_REDEEM_VALUE,
+  publicUrl,
 } from '@/config'
+import { DomainLink } from '@/components/ui/domain-link'
 import { usePointsSummary } from '@/hooks/use-points'
 import { formatDateTime } from '@/lib/utils'
 import type { PointEntryType } from '@/types'
@@ -121,7 +122,7 @@ export default function PointsPage() {
               </div>
             </div>
             <Button asChild>
-              <Link to="/">Jelajahi Katalog</Link>
+              <DomainLink to={publicUrl('/')}>Jelajahi Katalog</DomainLink>
             </Button>
           </div>
         </div>
@@ -196,7 +197,7 @@ export default function PointsPage() {
                 description="Poin akan terkumpul otomatis setiap transaksi belanjamu terkonfirmasi."
                 action={
                   <Button asChild>
-                    <Link to="/">Jelajahi Katalog</Link>
+                    <DomainLink to={publicUrl('/')}>Jelajahi Katalog</DomainLink>
                   </Button>
                 }
                 className="border-0"

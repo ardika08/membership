@@ -12,12 +12,13 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
-import { POINTS_REDEEM_VALUE, TELEGRAM_GROUP_URL } from '@/config'
+import { POINTS_REDEEM_VALUE, TELEGRAM_GROUP_URL, publicUrl } from '@/config'
 
 import { OwnedStatusBadge, TransactionStatusBadge } from '@/components/features/status-badge'
 import { PageTransition } from '@/components/layout/page-transition'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { DomainLink } from '@/components/ui/domain-link'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAuth } from '@/hooks/use-auth'
@@ -183,12 +184,12 @@ export default function DashboardPage() {
                   Produk Saya
                 </Link>
               </Button>
-              <Button asChild variant="outline">
-                <Link to="/">
-                  Jelajahi Katalog
-                  <ArrowRight />
-                </Link>
-              </Button>
+            <Button asChild variant="outline">
+              <DomainLink to={publicUrl('/')}>
+                Jelajahi Katalog
+                <ArrowRight />
+              </DomainLink>
+            </Button>
               <Button asChild variant="outline">
                 <a
                   href={TELEGRAM_GROUP_URL}
@@ -291,7 +292,7 @@ export default function DashboardPage() {
                   description="Mulai jelajahi katalog dan temukan produk digital pertama kamu."
                   action={
                     <Button asChild>
-                      <Link to="/">Lihat Katalog</Link>
+                      <DomainLink to={publicUrl('/')}>Lihat Katalog</DomainLink>
                     </Button>
                   }
                   className="border-0 py-10"

@@ -109,7 +109,7 @@ class CheckR2 extends Command
     protected function corsJson(): string
     {
         $origins = array_values(array_unique(array_filter([
-            rtrim((string) config('app.frontend_url'), '/'),
+            ...(config('app.frontend_urls') ?? []),
             'http://localhost:5173',
         ])));
 

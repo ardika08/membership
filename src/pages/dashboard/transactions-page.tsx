@@ -2,11 +2,13 @@ import { ExternalLink, Receipt, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import { publicUrl } from '@/config'
 import { TransactionStatusBadge } from '@/components/features/status-badge'
 import { PageHeader } from '@/components/layout/page-header'
 import { PageTransition } from '@/components/layout/page-transition'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { DomainLink } from '@/components/ui/domain-link'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Input } from '@/components/ui/input'
 import {
@@ -197,7 +199,7 @@ export default function TransactionsPage() {
                 }
                 action={
                   <Button asChild>
-                    <Link to="/">Jelajahi Katalog</Link>
+                    <DomainLink to={publicUrl('/')}>Jelajahi Katalog</DomainLink>
                   </Button>
                 }
                 className="border-0"

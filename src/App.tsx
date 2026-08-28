@@ -3,7 +3,7 @@ import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { Toaster } from 'sonner'
 
-import { FullScreenLoader, GuestRoute, ProtectedRoute, RoleGuard } from '@/components/layout/guards'
+import { FullScreenLoader, GuestRoute, MemberDomainRoute, ProtectedRoute, RoleGuard } from '@/components/layout/guards'
 import {
   AuthLayout,
   DashboardLayout,
@@ -68,11 +68,14 @@ function AppRoutes() {
       <ScrollToTop />
       <Suspense fallback={<FullScreenLoader />}>
         <Routes>
-          {/* Auth (guest only) */}
-          <Route element={<GuestRoute />}>
-            <Route element={<AuthLayout />}>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
+          {/* Setup multi-domain: halaman member/auth hanya hidup di domain member */}
+          <Route element={<MemberDomainRoute />}>
+            {/* Auth (guest only) */}
+            <Route element={<GuestRoute />}>
+              <Route element={<AuthLayout />}>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+              </Route>
             </Route>
           </Route>
 
@@ -84,39 +87,43 @@ function AppRoutes() {
           </Route>
 
           {/* Member area */}
-          <Route element={<ProtectedRoute />}>
-            <Route element={<DashboardLayout variant="member" />}>
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route
-                path="/dashboard/products"
-                element={<MyProductsPage />}
-              />
-              <Route
-                path="/dashboard/downloads"
-                element={<DownloadsPage />}
-              />
-              <Route path="/dashboard/points" element={<PointsPage />} />
-              <Route path="/transactions" element={<TransactionsPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
+          <Route element={<MemberDomainRoute />}>
+            <Route element={<ProtectedRoute />}>
+              <Route element={<DashboardLayout variant="member" />}>
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route
+                  path="/dashboard/products"
+                  element={<MyProductsPage />}
+                />
+                <Route
+                  path="/dashboard/downloads"
+                  element={<DownloadsPage />}
+                />
+                <Route path="/dashboard/points" element={<PointsPage />} />
+                <Route path="/transactions" element={<TransactionsPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+              </Route>
             </Route>
           </Route>
 
           {/* Admin area */}
-          <Route element={<RoleGuard allow="admin" />}>
-            <Route element={<DashboardLayout variant="admin" />}>
-              <Route
-                path="/admin/dashboard"
-                element={<AdminDashboardPage />}
-              />
-              <Route path="/admin/products" element={<AdminProductsPage />} />
-              <Route
-                path="/admin/transactions"
-                element={<AdminTransactionsPage />}
-              />
-              <Route path="/admin/points" element={<AdminPointsPage />} />
-              <Route path="/admin/users" element={<AdminUsersPage />} />
-              <Route path="/admin/categories" element={<AdminCategoriesPage />} />
-              <Route path="/admin/coupons" element={<AdminCouponsPage />} />
+          <Route element={<MemberDomainRoute />}>
+            <Route element={<RoleGuard allow="admin" />}>
+              <Route element={<DashboardLayout variant="admin" />}>
+                <Route
+                  path="/admin/dashboard"
+                  element={<AdminDashboardPage />}
+                />
+                <Route path="/admin/products" element={<AdminProductsPage />} />
+                <Route
+                  path="/admin/transactions"
+                  element={<AdminTransactionsPage />}
+                />
+                <Route path="/admin/points" element={<AdminPointsPage />} />
+                <Route path="/admin/users" element={<AdminUsersPage />} />
+                <Route path="/admin/categories" element={<AdminCategoriesPage />} />
+                <Route path="/admin/coupons" element={<AdminCouponsPage />} />
+              </Route>
             </Route>
           </Route>
         </Routes>

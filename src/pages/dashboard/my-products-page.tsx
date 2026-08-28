@@ -9,12 +9,14 @@ import { PageTransition } from '@/components/layout/page-transition'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { DomainLink } from '@/components/ui/domain-link'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCategoryLabel } from '@/hooks/use-categories'
 import { useDownloadProduct, useMyProducts } from '@/hooks/use-products'
+import { publicUrl } from '@/config'
 import { formatBytes, formatDate, formatRelativeTime } from '@/lib/utils'
 import type { OwnedProduct } from '@/types'
 
@@ -128,7 +130,7 @@ export default function MyProductsPage() {
           description="Semua produk digital yang kamu miliki. Klik download untuk mengunduh file terbaru."
           actions={
             <Button asChild variant="outline">
-              <Link to="/">Jelajahi Katalog</Link>
+              <DomainLink to={publicUrl('/')}>Jelajahi Katalog</DomainLink>
             </Button>
           }
         />
@@ -190,7 +192,7 @@ export default function MyProductsPage() {
             }
             action={
               <Button asChild>
-                <Link to="/">Jelajahi Katalog</Link>
+                <DomainLink to={publicUrl('/')}>Jelajahi Katalog</DomainLink>
               </Button>
             }
           />

@@ -4,16 +4,18 @@
 |--------------------------------------------------------------------------
 | CORS — origin frontend yang diizinkan mengakses API
 |--------------------------------------------------------------------------
-| Default mengikuti FRONTEND_URL di .env (dev: Vite di 5173).
+| Daftar origin diambil dari FRONTEND_URL di .env (bisa beberapa domain,
+| dipisah koma — mis. member.grafistadigital.com dan grafistadigital.com).
 | Di environment lokal, varian localhost/127.0.0.1 juga diizinkan
 | karena Vite bisa diakses lewat keduanya.
-| Saat deploy, isi FRONTEND_URL dengan domain frontend, atau
-| kosongkan untuk mengizinkan semua origin ('*').
+| Kosongkan FRONTEND_URL untuk mengizinkan semua origin ('*').
 */
 
-$origin = env('FRONTEND_URL', 'http://localhost:5173');
+$origins = config('app.frontend_urls') ?? [];
 
-$origins = $origin !== '' ? [$origin] : ['*'];
+if ($origins === []) {
+    $origins = ['*'];
+}
 
 if (env('APP_ENV', 'production') === 'local') {
     $origins = array_values(array_unique(array_merge(

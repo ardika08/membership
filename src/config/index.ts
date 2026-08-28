@@ -8,6 +8,52 @@ export const TELEGRAM_GROUP_URL = 'https://t.me/grafista_digital'
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000/api'
 
+/* ------------------------- Setup multi-domain ------------------------- */
+
+/**
+ * Domain publik (katalog) & domain member (dashboard) untuk setup
+ * dua domain: grafistadigital.com + member.grafistadigital.com.
+ * Kosongkan keduanya (mode dev / satu domain) agar semua navigasi
+ * tetap berjalan satu origin seperti biasa.
+ */
+export const PUBLIC_URL = (import.meta.env.VITE_PUBLIC_URL ?? '').replace(
+  /\/+$/,
+  '',
+)
+export const MEMBER_URL = (import.meta.env.VITE_MEMBER_URL ?? '').replace(
+  /\/+$/,
+  '',
+)
+
+function currentOrigin(): string {
+  return typeof window === 'undefined' ? '' : window.location.origin
+}
+
+/** Apakah aplikasi berjalan di domain member (dashboard/admin/auth)? */
+export function isMemberDomain(): boolean {
+  return !MEMBER_URL || currentOrigin() === MEMBER_URL
+}
+
+/** Apakah aplikasi berjalan di domain publik (katalog)? */
+export function isPublicDomain(): boolean {
+  return !PUBLIC_URL || currentOrigin() === PUBLIC_URL
+}
+
+/** URL menuju halaman katalog — path biasa jika sudah di domain katalog. */
+export function publicUrl(path = '/'): string {
+  return !PUBLIC_URL || isPublicDomain() ? path : `${PUBLIC_URL}${path}`
+}
+
+/** URL menuju area member — path biasa jika sudah di domain member. */
+export function memberUrl(path = '/'): string {
+  return !MEMBER_URL || isMemberDomain() ? path : `${MEMBER_URL}${path}`
+}
+
+/** Deteksi URL absolut (lintas domain) — dipakai DomainLink. */
+export function isAbsoluteUrl(url: string): boolean {
+  return /^https?:\/\//.test(url)
+}
+
 export const TOKEN_STORAGE_KEY = 'membership.auth'
 export const THEME_STORAGE_KEY = 'membership.theme'
 

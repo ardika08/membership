@@ -5,8 +5,10 @@ import { Logo } from '@/components/layout/logo'
 import { ThemeToggle } from '@/components/layout/theme-toggle'
 import { UserMenu } from '@/components/layout/user-menu'
 import { Button } from '@/components/ui/button'
+import { DomainLink } from '@/components/ui/domain-link'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/hooks/use-auth'
+import { memberUrl } from '@/config'
 import { cn } from '@/lib/utils'
 import { useUiStore } from '@/store/uiStore'
 
@@ -89,9 +91,9 @@ export function Navbar({
             <>
               {!showSidebarToggle && (
                 <Button asChild size="sm" className="hidden sm:inline-flex">
-                  <Link to={isAdmin ? '/admin/dashboard' : '/dashboard'}>
+                  <DomainLink to={memberUrl(isAdmin ? '/admin/dashboard' : '/dashboard')}>
                     Dashboard
-                  </Link>
+                  </DomainLink>
                 </Button>
               )}
               <UserMenu />
@@ -99,10 +101,10 @@ export function Navbar({
           ) : (
             <>
               <Button asChild variant="ghost" size="sm">
-                <Link to="/login">Masuk</Link>
+                <DomainLink to={memberUrl('/login')}>Masuk</DomainLink>
               </Button>
               <Button asChild size="sm">
-                <Link to="/register">Daftar</Link>
+                <DomainLink to={memberUrl('/register')}>Daftar</DomainLink>
               </Button>
             </>
           )}

@@ -1,15 +1,22 @@
 # 🚀 Panduan Deploy — Grafista Digital
 
-Panduan deploy ke **shared hosting (cPanel)** dengan frontend React + backend Laravel 12.
+Panduan deploy ke **shared hosting (cPanel)** dengan frontend React + backend Laravel 12,
+setup **multi-domain**: katalog dan member area di domain berbeda.
 
-> **Struktur yang direkomendasikan:**
->
-> | Bagian | Lokasi di hosting | Diakses via |
-> |--------|-------------------|-------------|
-> | Frontend (`dist/`) | `public_html/` | `https://domainkamu.com` |
-> | Backend (`backend/`) | `laravel/` (di luar `public_html`) | `https://api.domainkamu.com` (subdomain) |
->
-> Alternatif satu domain (tanpa subdomain) ada di bagian **Opsi B** di bawah.
+## 🌐 Struktur Domain
+
+| Domain | Isi | Lokasi di hosting |
+|--------|-----|-------------------|
+| `grafistadigital.com` | Katalog publik + detail produk | `public_html/` (isi `dist/`) |
+| `member.grafistadigital.com` | Dashboard member, login, admin | docroot subdomain `member` (isi `dist/` yang sama) |
+| `api.grafistadigital.com` | Backend Laravel API | docroot `laravel/public` |
+
+> **Konsep kunci:** frontend adalah SATU aplikasi React. Build sekali (`npm run build`),
+> upload `dist/` yang sama ke dua domain. Aplikasi otomatis tahu posisinya lewat
+> `window.location.origin` dan mengarahkan link dengan benar:
+> - Di domain katalog → tombol Masuk/Daftar/Dashboard/Beli menuju `member.*`
+> - Di domain member → link Katalog menuju `grafistadigital.com`
+> - Halaman member yang dibuka di domain katalog otomatis dialihkan ke `member.*`
 
 ---
 
@@ -19,51 +26,50 @@ Panduan deploy ke **shared hosting (cPanel)** dengan frontend React + backend La
 - [x] Backend smoke test 12/12 PASS (`php backend/deploy-smoke.php`)
 - [x] Pembayaran Mayar produksi sudah terverifikasi end-to-end
 - [x] Upload file produk ke R2 Cloudflare sudah terverifikasi
-- [ ] Domain sudah disiapkan dan mengarah ke hosting
-- [ ] SSL (HTTPS) aktif untuk domain dan subdomain API
+- [ ] Domain utama + 2 subdomain (`member`, `api`) sudah dibuat di cPanel
+- [ ] SSL (HTTPS) aktif untuk ketiga domain
 
 ---
 
-## 🔧 Opsi A — Subdomain API (Direkomendasikan)
+## 🔧 Langkah 1 — Siapkan Subdomain di cPanel
 
-### Langkah 1: Siapkan subdomain untuk API
+1. Login **cPanel** → menu **Subdomains**.
+2. Buat `member.grafistadigital.com` → document root: `member`
+3. Buat `api.grafistadigital.com` → document root: `laravel/public`
+   (kalau tidak bisa pilih path itu, buat root-nya `api` dulu, nanti disesuaikan).
+4. Aktifkan SSL: menu **SSL/TLS Status** → **Run AutoSSL** untuk ketiga domain.
 
-1. Login ke **cPanel** hosting kamu.
-2. Buka menu **Subdomains**.
-3. Buat subdomain: `api` → document root: `/laravel/public`
-   (misalnya `api.domainkamu.com` menunjuk ke folder `laravel/public`).
+---
 
-### Langkah 2: Upload backend Laravel
+## 🔧 Langkah 2 — Upload Backend Laravel
 
-1. Buka menu **File Manager** di cPanel.
-2. Buat folder `laravel` di **root home** (bukan di dalam `public_html`).
-3. Upload semua isi folder `backend/` lokal kamu **kecuali**:
-   - `backend/vendor/` (akan di-install ulang via SSH/composer)
-   - `backend/node_modules/` (tidak dipakai)
-   - `backend/.env` (akan dibuat baru di server)
-4. Atau lewat SSH (jika hosting mendukung):
-   ```bash
-   # dari root home
-   git clone https://github.com/ardika08/membership.git temp-clone
-   cp -r temp-clone/backend laravel
-   cd laravel && composer install --no-dev --optimize-autoloader
-   ```
+1. Buka **File Manager** → buat folder `laravel` di root home (setara dengan `public_html`, BUKAN di dalamnya).
+2. Upload semua isi folder `backend/` lokal ke `laravel/` **kecuali**:
+   - `backend/vendor/` — install ulang via SSH: `composer install --no-dev --optimize-autoloader`
+   - `backend/node_modules/`, `backend/.env`
+3. Pastikan `api.grafistadigital.com` menunjuk ke `laravel/public`
+   (cek di cPanel → Subdomains → Edit Document Root).
 
-### Langkah 3: Konfigurasi backend di server
+> Kalau hosting tidak mendukung SSH/composer, upload folder `vendor/` lokal
+> ke server juga (lebih lambat tapi berfungsi).
 
-1. Salin `.env.example` menjadi `.env`:
+---
+
+## 🔧 Langkah 3 — Konfigurasi Backend di Server
+
+1. Salin `.env.example` → `.env`, lalu generate key:
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
-2. Edit `.env` di server, isi bagian penting:
-
+2. Edit `.env`:
    ```ini
    APP_ENV=production
    APP_DEBUG=false
-   APP_URL=https://api.domainkamu.com
+   APP_URL=https://api.grafistadigital.com
 
-   FRONTEND_URL=https://domainkamu.com
+   # Multi-domain: entri PERTAMA = domain member (redirect Mayar & R2 CORS)
+   FRONTEND_URL=https://member.grafistadigital.com,https://grafistadigital.com
 
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
@@ -85,12 +91,7 @@ Panduan deploy ke **shared hosting (cPanel)** dengan frontend React + backend La
    QUEUE_CONNECTION=sync
    SESSION_DRIVER=file
    ```
-
-   > ⚠️ **Penting:** ganti `CACHE_STORE`, `QUEUE_CONNECTION`, `SESSION_DRIVER` dari
-   > `database` ke `file`/`sync` agar tidak butuh tabel tambahan dan lebih sederhana
-   > di shared hosting.
-
-3. Jalankan migrasi + seed:
+3. Migrasi + seed:
    ```bash
    php artisan migrate --seed
    ```
@@ -102,47 +103,45 @@ Panduan deploy ke **shared hosting (cPanel)** dengan frontend React + backend La
    chmod -R 775 storage bootstrap/cache
    ```
 
-### Langkah 4: Build & upload frontend
+> ⚠️ Ganti `CACHE_STORE`/`SESSION_DRIVER` dari `database` ke `file` agar sederhana
+> di shared hosting (tidak butuh tabel tambahan).
 
-1. Di komputer lokal, edit file **`.env.production`** (di root proyek):
+---
+
+## 🔧 Langkah 4 — Build & Upload Frontend
+
+1. File `.env.production` sudah berisi:
    ```ini
-   VITE_API_BASE_URL=https://api.domainkamu.com/api
+   VITE_API_BASE_URL=https://api.grafistadigital.com/api
+   VITE_PUBLIC_URL=https://grafistadigital.com
+   VITE_MEMBER_URL=https://member.grafistadigital.com
    ```
 2. Build:
    ```bash
    npm run build
    ```
-3. Upload semua isi folder `dist/` ke `public_html/` di hosting.
-
-### Langkah 5: Verifikasi
-
-1. Buka `https://domainkamu.com` → katalog produk muncul.
-2. Buka `https://api.domainkamu.com/api/products` → JSON produk.
-3. Login member → cek dashboard, transaksi, download produk.
-4. Tes satu pembayaran kecil untuk memastikan Mayar production bekerja.
+3. Upload **isi folder `dist/`** ke:
+   - `public_html/` (domain katalog)
+   - folder docroot subdomain `member` (mis. `member/`)
+   
+   Keduanya berisi file yang sama persis. File `.htaccess` untuk SPA routing
+   sudah otomatis ikut di dalam `dist/`.
 
 ---
 
-## 🔧 Opsi B — Satu Domain (API di path `/api`)
+## 🔧 Langkah 5 — Update CORS R2 (PENTING untuk upload admin)
 
-Gunakan jika tidak ingin membuat subdomain. Backend tetap di folder `laravel/`
-(di luar public_html), lalu tambahkan `.htaccess` di `public_html`:
+Karena admin sekarang di `member.grafistadigital.com`, bucket R2 harus mengizinkan
+origin itu. Jalankan dari folder `laravel/` di server (atau lokal dengan .env produksi):
 
-```apache
-# public_html/.htaccess
-RewriteEngine On
-
-# Redirect semua /api/* ke Laravel backend
-RewriteRule ^api(/.*)?$ laravel/public/index.php [L]
+```bash
+php artisan r2:cors
 ```
 
-Dan edit `.env.production` frontend:
-```ini
-VITE_API_BASE_URL=https://domainkamu.com/api
-```
-
-> ⚠️ Dengan opsi ini, pastikan `FRONTEND_URL` di backend `.env` tetap
-> `https://domainkamu.com` (untuk CORS).
+Perintah ini otomatis membaca semua domain dari `FRONTEND_URL` dan menerapkan
+CORS policy ke bucket R2. (Butuh token R2 dengan permission **Admin Read & Write**;
+kalau token kamu Object-only, tempel JSON policy manual — perintah ini akan
+menampilkan JSON-nya.)
 
 ---
 
@@ -152,37 +151,32 @@ VITE_API_BASE_URL=https://domainkamu.com/api
 |------|------|
 | Password admin | Ganti password `admin@example.com` sebelum go-live |
 | Akun demo member | Hapus akun `rizky@example.com` (via admin panel Users) |
-| APP_DEBUG | Pastikan `false` (jangan sampai error detail tampil ke publik) |
-| API Token R2 | Buat token baru dengan scope hanya **Object Read & Write** untuk bucket produk |
-| HTTPS | Aktifkan SSL (Let's Encrypt gratis di cPanel) untuk domain + subdomain |
+| APP_DEBUG | Pastikan `false` |
+| API Token R2 | Buat token baru scope hanya **Object Read & Write** untuk produksi |
+| HTTPS | AutoSSL aktif untuk 3 domain |
 
 ---
 
 ## 🧪 Verifikasi Pasca-Deploy
 
-Jalankan smoke test dari komputer lokal (backend harus bisa diakses):
-
-```bash
-cd backend
-php deploy-smoke.php   # ganti $baseUrl di file ini dengan URL API produksi
-```
-
-Atau cek manual via browser:
-- `https://api.domainkamu.com/api/products` → JSON daftar produk
-- Login + register via frontend berfungsi
-- Upload file produk (admin) → file muncul di R2
-- Pembayaran → status transaksi berubah jadi paid
-- Download produk setelah paid
+1. `https://grafistadigital.com` → katalog produk tampil.
+2. Klik **Masuk** → otomatis pindah ke `https://member.grafistadigital.com/login`.
+3. Login/register di domain member → dashboard muncul.
+4. Di dashboard, klik **Katalog Produk** → kembali ke `grafistadigital.com`.
+5. Dari katalog, buka produk → klik **Beli Sekarang** → diarahkan ke halaman produk
+   di domain member → login → **otomatis kembali ke halaman produk itu** → checkout.
+6. `https://api.grafistadigital.com/api/products` → JSON produk.
+7. Tes satu pembayaran kecil + upload file produk (admin) + download produk (member).
 
 ---
 
 ## ❓ Troubleshooting
 
-| Gejala | Kemungkinan Penyebab | Solusi |
-|--------|----------------------|--------|
-| Halaman putih/blank | Base URL API salah | Cek `.env.production` & rebuild |
-| Error CORS di console | `FRONTEND_URL` backend beda | Samakan dengan domain frontend |
-| 500 di API | `APP_DEBUG=false` menyembunyikan error | Cek `storage/logs/laravel.log` |
-| Login gagal | Token Sanctum kadaluarsa/beda domain | Pastikan HTTPS aktif di kedua domain |
-| Upload gagal | Kredensial R2 salah | Cek `R2_*` di `.env` server |
-| Gagal migrate | User DB kurang privilege | Beri ALL privilege di cPanel MySQL |
+| Gejala | Penyebab | Solusi |
+|--------|----------|--------|
+| Halaman putih | `VITE_API_BASE_URL` salah | Periksa `.env.production`, rebuild |
+| Error CORS di console | Origin belum terdaftar | Tambahkan di `FRONTEND_URL` (comma-separated) |
+| Deep-link 404 (mis. `/login`) | `.htaccess` tidak ikut ter-upload | Upload manual `dist/.htaccess` |
+| 500 di API | Error tersembunyi (APP_DEBUG=false) | Cek `storage/logs/laravel.log` |
+| Upload admin gagal | R2 CORS belum ter-update | Jalankan `php artisan r2:cors` |
+| Redirect Mayar salah domain | Entri pertama FRONTEND_URL bukan domain member | Urutkan: domain member dulu |

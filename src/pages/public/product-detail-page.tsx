@@ -11,6 +11,7 @@ import {
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
+import { isMemberDomain, memberUrl, publicUrl } from '@/config'
 import { InvoiceModal } from '@/components/features/invoice-modal'
 import { ProductCard } from '@/components/features/product-card'
 import { PageTransition } from '@/components/layout/page-transition'
@@ -18,6 +19,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
+import { DomainLink } from '@/components/ui/domain-link'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCategoryLabel } from '@/hooks/use-categories'
@@ -76,7 +78,7 @@ export default function ProductDetailPage() {
           description="Produk yang kamu cari mungkin sudah dihapus atau tautannya tidak valid."
           action={
             <Button asChild>
-              <Link to="/">Kembali ke katalog</Link>
+              <DomainLink to={publicUrl('/')}>Kembali ke katalog</DomainLink>
             </Button>
           }
         />
@@ -98,6 +100,12 @@ export default function ProductDetailPage() {
 
   const handleBuy = () => {
     if (!isAuthenticated) {
+      // Di domain katalog (belum bisa login), arahkan ke halaman produk
+      // di domain member agar alur login → checkout berlanjut di sana.
+      if (!isMemberDomain()) {
+        window.location.href = memberUrl(`/products/${id}`)
+        return
+      }
       navigate('/login', { state: { from: { pathname: `/products/${id}` } } })
       return
     }
@@ -108,10 +116,10 @@ export default function ProductDetailPage() {
     <PageTransition>
       <div className="mx-auto max-w-[1400px] px-4 py-8 sm:px-6 lg:px-8">
         <Button asChild variant="ghost" size="sm" className="-ml-2">
-          <Link to="/">
+          <DomainLink to={publicUrl('/')}>
             <ArrowLeft />
             Kembali ke katalog
-          </Link>
+          </DomainLink>
         </Button>
 
         <div className="mt-6 grid items-start gap-10 lg:grid-cols-[1.5fr_1fr]">

@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { toast } from 'sonner'
 
+import { isMemberDomain, memberUrl } from '@/config'
 import { useAuth } from '@/hooks/use-auth'
 
 function FullScreenLoader() {
@@ -55,6 +56,28 @@ export function GuestRoute() {
 
   if (isAuthenticated) {
     return <Navigate to={isAdmin ? '/admin/dashboard' : '/dashboard'} replace />
+  }
+
+  return <Outlet />
+}
+
+/**
+ * Setup multi-domain: alihkan halaman member/auth ke domain member
+ * (member.grafistadigital.com) saat dibuka di domain katalog.
+ * Tanpa pengaruh di dev lokal / mode satu domain (MEMBER_URL kosong).
+ */
+export function MemberDomainRoute() {
+  const onMemberDomain = isMemberDomain()
+
+  useEffect(() => {
+    if (!onMemberDomain) {
+      const { pathname, search } = window.location
+      window.location.replace(memberUrl(`${pathname}${search}`))
+    }
+  }, [onMemberDomain])
+
+  if (!onMemberDomain) {
+    return <FullScreenLoader />
   }
 
   return <Outlet />

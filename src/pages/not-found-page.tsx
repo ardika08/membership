@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion'
 import { ArrowLeft, Home } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
+import { DomainLink } from '@/components/ui/domain-link'
+import { publicUrl } from '@/config'
 
 export default function NotFoundPage() {
   const navigate = useNavigate()
@@ -31,10 +33,10 @@ export default function NotFoundPage() {
             Kembali
           </Button>
           <Button asChild>
-            <Link to="/">
+            <DomainLink to={publicUrl('/')}>
               <Home />
               Ke Katalog
-            </Link>
+            </DomainLink>
           </Button>
         </div>
       </motion.div>

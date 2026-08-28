@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import type * as React from 'react'
-import { Link } from 'react-router-dom'
 
 import { Logo } from '@/components/layout/logo'
 import { ThemeToggle } from '@/components/layout/theme-toggle'
-import { APP_NAME } from '@/config'
+import { DomainLink } from '@/components/ui/domain-link'
+import { APP_NAME, publicUrl } from '@/config'
 
 const BENEFITS = [
   'Akses instan setelah pembayaran terkonfirmasi',
@@ -62,9 +62,12 @@ export function AuthShell({
 
         <p className="text-muted-foreground text-center text-xs">
           © {new Date().getFullYear()} {APP_NAME}.{' '}
-          <Link to="/" className="hover:text-foreground underline-offset-4 hover:underline">
+          <DomainLink
+            to={publicUrl('/')}
+            className="hover:text-foreground underline-offset-4 hover:underline"
+          >
             Lihat katalog
-          </Link>
+          </DomainLink>
         </p>
       </div>
 

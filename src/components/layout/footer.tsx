@@ -1,11 +1,10 @@
-import { Link } from 'react-router-dom'
-
-import { APP_NAME, APP_TAGLINE } from '@/config'
+import { APP_NAME, APP_TAGLINE, memberUrl } from '@/config'
+import { DomainLink } from '@/components/ui/domain-link'
 
 const LINKS = [
   { label: 'Katalog', to: '/' },
-  { label: 'Masuk', to: '/login' },
-  { label: 'Daftar', to: '/register' },
+  { label: 'Masuk', to: memberUrl('/login') },
+  { label: 'Daftar', to: memberUrl('/register') },
 ]
 
 export function Footer() {
@@ -17,13 +16,13 @@ export function Footer() {
         </p>
         <nav className="flex items-center gap-5">
           {LINKS.map((link) => (
-            <Link
+            <DomainLink
               key={link.to}
               to={link.to}
               className="hover:text-foreground rounded transition-colors"
             >
               {link.label}
-            </Link>
+            </DomainLink>
           ))}
         </nav>
       </div>
