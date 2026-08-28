@@ -230,26 +230,26 @@ export default function DashboardPage() {
         {/* Aktivitas */}
         <div className="grid gap-4 sm:grid-cols-2">
           <Card>
-            <CardHeader className="flex-row items-center justify-between">
+            <CardHeader className="flex-row flex-wrap items-center justify-between p-5">
               <CardTitle>Produk terbaru kamu</CardTitle>
               <Button asChild variant="ghost" size="sm">
                 <Link to="/dashboard/products">Lihat semua</Link>
               </Button>
             </CardHeader>
-            <CardContent>
-              {ownedLoading ? (
-                <div className="space-y-3">
-                  {Array.from({ length: 3 }).map((_, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <Skeleton className="size-12 rounded-xl" />
-                      <div className="flex-1 space-y-2">
-                        <Skeleton className="h-3.5 w-3/4" />
-                        <Skeleton className="h-3 w-1/3" />
+              <CardContent className="p-5 pt-0">
+                {ownedLoading ? (
+                  <div className="space-y-3">
+                    {Array.from({ length: 3 }).map((_, index) => (
+                      <div key={index} className="flex items-center gap-3">
+                        <Skeleton className="size-12 rounded-xl" />
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-3.5 w-3/4" />
+                          <Skeleton className="h-3 w-1/3" />
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : owned && owned.length > 0 ? (
+                    ))}
+                  </div>
+                ) : owned && owned.length > 0 ? (
                 <ul className="space-y-1">
                   {owned.slice(0, 4).map((item) => (
                     <li key={item.id}>
@@ -301,20 +301,20 @@ export default function DashboardPage() {
           </Card>
 
           <Card>
-            <CardHeader className="flex-row items-center justify-between">
+            <CardHeader className="flex-row flex-wrap items-center justify-between p-5">
               <CardTitle>Transaksi terakhir</CardTitle>
               <Button asChild variant="ghost" size="sm">
                 <Link to="/transactions">Lihat semua</Link>
               </Button>
             </CardHeader>
-            <CardContent>
-              {trxLoading ? (
-                <div className="space-y-3">
-                  {Array.from({ length: 3 }).map((_, index) => (
-                    <Skeleton key={index} className="h-14 w-full" />
-                  ))}
-                </div>
-              ) : transactions && transactions.length > 0 ? (
+              <CardContent className="p-5 pt-0">
+                {trxLoading ? (
+                  <div className="space-y-3">
+                    {Array.from({ length: 3 }).map((_, index) => (
+                      <Skeleton key={index} className="h-14 w-full" />
+                    ))}
+                  </div>
+                ) : transactions && transactions.length > 0 ? (
                 <ul className="space-y-1">
                   {transactions.slice(0, 4).map((trx) => (
                     <li
