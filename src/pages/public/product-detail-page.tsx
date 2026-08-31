@@ -96,6 +96,7 @@ export default function ProductDetailPage() {
   const discount = computeDiscountPercent(product.price, product.originalPrice)
   const releaseAt = product.releaseAt ? new Date(product.releaseAt) : null
   const isPreOrder = Boolean(releaseAt && releaseAt > new Date())
+  const hasFile = product.fileSize > 0 || Boolean(product.downloadUrl)
 
   const handleBuy = () => {
     if (!isAuthenticated) {
@@ -254,17 +255,30 @@ export default function ProductDetailPage() {
                   ))}
                 </ul>
 
-                <div className="border-border bg-surface flex items-center gap-3 rounded-xl border p-3.5">
-                  <FileArchive className="text-muted-foreground size-5 shrink-0" />
-                  <div className="min-w-0 text-xs">
-                    <p className="font-medium">
-                      {product.fileType} · {formatBytes(product.fileSize)}
-                    </p>
-                    <p className="text-muted-foreground">
-                      Unduhan tersedia langsung setelah pembayaran
-                    </p>
+                {isPreOrder ? (
+                  <div className="border-border bg-surface flex items-center gap-3 rounded-xl border p-3.5">
+                    <PackageX className="text-muted-foreground size-5 shrink-0" />
+                    <div className="min-w-0 text-xs">
+                      <p className="font-medium">Pre-Order</p>
+                      <p className="text-muted-foreground">
+                        File tersedia saat rilis
+                        {releaseAt && releaseAt.toLocaleDateString('id-ID')}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                ) : hasFile ? (
+                  <div className="border-border bg-surface flex items-center gap-3 rounded-xl border p-3.5">
+                    <FileArchive className="text-muted-foreground size-5 shrink-0" />
+                    <div className="min-w-0 text-xs">
+                      <p className="font-medium">
+                        {product.fileType} · {formatBytes(product.fileSize)}
+                      </p>
+                      <p className="text-muted-foreground">
+                        Unduhan tersedia langsung setelah pembayaran
+                      </p>
+                    </div>
+                  </div>
+                ) : null}
               </CardContent>
             </Card>
           </div>
