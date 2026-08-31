@@ -18,6 +18,7 @@ class Product extends Model
         'price',
         'original_price',
         'is_active',
+        'release_at',
         'download_type',
         'download_url',
         'file_name',
@@ -37,6 +38,7 @@ class Product extends Model
     {
         return [
             'is_active' => 'boolean',
+            'release_at' => 'datetime',
             'highlights' => 'array',
             'includes' => 'array',
             'price' => 'integer',

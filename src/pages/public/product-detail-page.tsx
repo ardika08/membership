@@ -4,7 +4,6 @@ import {
   Download,
   FileArchive,
   PackageX,
-  RefreshCw,
   ShieldCheck,
   Star,
 } from 'lucide-react'
@@ -29,12 +28,10 @@ import {
   computeDiscountPercent,
   formatBytes,
   formatCurrency,
-  formatDate,
 } from '@/lib/utils'
 
 const GUARANTEES = [
   { icon: ShieldCheck, label: 'Pembayaran aman via Mayar' },
-  { icon: RefreshCw, label: 'Update gratis selamanya' },
   { icon: Download, label: 'Unduh ulang kapan saja' },
 ]
 
@@ -97,6 +94,8 @@ export default function ProductDetailPage() {
       .slice(0, 4) ?? []
 
   const discount = computeDiscountPercent(product.price, product.originalPrice)
+  const releaseAt = product.releaseAt ? new Date(product.releaseAt) : null
+  const isPreOrder = Boolean(releaseAt && releaseAt > new Date())
 
   const handleBuy = () => {
     if (!isAuthenticated) {
@@ -136,6 +135,7 @@ export default function ProductDetailPage() {
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge>{categoryLabel(product.category)}</Badge>
+                {isPreOrder && <Badge variant="secondary">Pre-Order</Badge>}
                 <span className="text-muted-foreground flex items-center gap-1 text-sm">
                   <Star className="fill-warning text-warning size-4" />
                   <span className="text-foreground font-medium">
@@ -174,16 +174,7 @@ export default function ProductDetailPage() {
             <div>
               <h2 className="text-lg font-semibold">Spesifikasi</h2>
               <dl className="border-border mt-4 divide-y rounded-2xl border">
-                {[
-                  ...product.includes,
-                  { label: 'Ukuran file', value: formatBytes(product.fileSize) },
-                  { label: 'Format file', value: product.fileType },
-                  { label: 'Versi', value: `v${product.version}` },
-                  {
-                    label: 'Terakhir diperbarui',
-                    value: formatDate(product.updatedAt),
-                  },
-                ].map((item) => (
+                {product.includes.map((item) => (
                   <div
                     key={item.label}
                     className="flex items-center justify-between gap-4 px-4 py-3.5 text-sm"
@@ -215,7 +206,9 @@ export default function ProductDetailPage() {
                     )}
                   </div>
                   <p className="text-muted-foreground mt-1.5 text-sm">
-                    Pembayaran sekali, akses selamanya.
+                    {isPreOrder && releaseAt
+                      ? `Akses tersedia saat rilis ${releaseAt.toLocaleDateString('id-ID')}.`
+                      : 'Pembayaran sekali, akses selamanya.'}
                   </p>
                 </div>
 

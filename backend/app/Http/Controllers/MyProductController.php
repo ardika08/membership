@@ -33,6 +33,7 @@ class MyProductController extends Controller
         abort_if($owned->status !== 'active', 403, 'Pembayaran belum terkonfirmasi.');
 
         $product = $owned->product;
+        abort_if($product->release_at?->isFuture(), 403, 'Produk belum dirilis.');
         $downloadType = $product->download_type ?? 'upload';
 
         if ($downloadType === 'external') {

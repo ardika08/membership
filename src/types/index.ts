@@ -47,6 +47,8 @@ export interface Product {
   rating: number
   sales: number
   updatedAt: string
+  /** Scheduled release date for pre-order products. */
+  releaseAt?: string | null
 }
 
 export type OwnedStatus = 'active' | 'pending'

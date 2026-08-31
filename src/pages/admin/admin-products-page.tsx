@@ -108,6 +108,7 @@ const EMPTY_FORM: ProductValues = {
   downloadType: 'external',
   downloadUrl: '',
   fileName: '',
+  releaseAt: '',
 }
 
 function ProductFormDialog({
@@ -160,6 +161,9 @@ function ProductFormDialog({
             downloadType: product.downloadType ?? 'external',
             downloadUrl: product.downloadUrl ?? '',
             fileName: product.fileName ?? '',
+            releaseAt: product.releaseAt
+              ? new Date(product.releaseAt).toISOString().slice(0, 16)
+              : '',
           }
         : EMPTY_FORM,
     )
@@ -210,6 +214,7 @@ function ProductFormDialog({
         values.downloadType === 'upload' && uploadedFile
           ? uploadedFile.fileType
           : product?.fileType ?? 'ZIP',
+      releaseAt: values.releaseAt || null,
     }
     if (product) {
       await updateProduct.mutateAsync({ id: product.id, payload })
@@ -318,6 +323,13 @@ function ProductFormDialog({
             placeholder="https://images.unsplash.com/…"
             error={errors.cover?.message}
             {...register('cover')}
+          />
+
+          <TextInput
+            label="Tanggal rilis produk (opsional)"
+            type="datetime-local"
+            hint="Kosongkan untuk produk yang langsung tersedia."
+            {...register('releaseAt')}
           />
 
           <TextInput

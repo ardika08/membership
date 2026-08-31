@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCategoryLabel } from '@/hooks/use-categories'
+import { memberUrl } from '@/config'
 import { cn, computeDiscountPercent, formatCurrency } from '@/lib/utils'
 import type { Product } from '@/types'
 
@@ -30,7 +31,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     >
       <Card className="group hover:shadow-lift h-full overflow-hidden p-0 transition-all duration-300 hover:-translate-y-1">
         <Link
-          to={`/products/${product.id}`}
+          to={memberUrl(`/products/${product.id}`)}
           className="flex h-full flex-col rounded-2xl focus-visible:outline-none"
         >
           <div className="bg-muted relative aspect-[16/10] overflow-hidden">

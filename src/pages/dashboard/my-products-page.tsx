@@ -24,6 +24,8 @@ function OwnedCard({ item, index }: { item: OwnedProduct; index: number }) {
   const categoryLabel = useCategoryLabel()
   const download = useDownloadProduct()
   const isActive = item.status === 'active'
+  const releaseAt = item.product.releaseAt ? new Date(item.product.releaseAt) : null
+  const isPreOrder = Boolean(releaseAt && releaseAt > new Date())
 
   return (
     <motion.div
@@ -52,6 +54,11 @@ function OwnedCard({ item, index }: { item: OwnedProduct; index: number }) {
             <h3 className="line-clamp-2 text-[15px] leading-snug font-semibold">
               {item.product.title}
             </h3>
+            {isPreOrder && (
+              <p className="text-muted-foreground text-xs">
+                Pre-Order · Akses tersedia saat rilis {formatDate(item.product.releaseAt!)}
+              </p>
+            )}
           </div>
 
           <dl className="text-muted-foreground grid grid-cols-2 gap-y-1.5 text-xs">
@@ -74,11 +81,16 @@ function OwnedCard({ item, index }: { item: OwnedProduct; index: number }) {
           <div className="mt-auto flex gap-2 pt-1">
             <Button
               className="flex-1"
-              disabled={!isActive}
+              disabled={!isActive || isPreOrder || !item.product.downloadUrl}
               loading={download.isPending && download.variables === item.id}
               onClick={() => download.mutate(item.id)}
             >
-              {isActive ? (
+              {isPreOrder ? (
+                <>
+                  <Clock />
+                  Menunggu rilis
+                </>
+              ) : isActive ? (
                 <>
                   <Download />
                   Download

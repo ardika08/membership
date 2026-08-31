@@ -18,6 +18,7 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'originalPrice' => $this->original_price,
             'isActive' => $this->is_active,
+            'releaseAt' => $this->release_at?->toIso8601String(),
             'downloadType' => $this->download_type,
             'downloadUrl' => $this->when(
                 $request->user()?->isAdmin(),

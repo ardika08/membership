@@ -7,6 +7,7 @@ import {
 import { toast } from 'sonner'
 
 import { getErrorMessage } from '@/api/client'
+import { useAuth } from '@/hooks/use-auth'
 import {
   createProduct,
   deleteProduct,
@@ -47,7 +48,13 @@ export function useProduct(id: string | undefined) {
 }
 
 export function useMyProducts() {
-  return useQuery({ queryKey: productKeys.mine, queryFn: fetchMyProducts })
+  const { isAuthenticated } = useAuth()
+
+  return useQuery({
+    queryKey: productKeys.mine,
+    queryFn: fetchMyProducts,
+    enabled: isAuthenticated,
+  })
 }
 
 export function useDownloads() {

@@ -649,6 +649,7 @@ export type ProductInput = Pick<
   | 'fileName'
   | 'fileSize'
   | 'fileType'
+  | 'releaseAt'
 >
 
 export interface UploadProductFileResult {

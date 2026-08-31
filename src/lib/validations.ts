@@ -104,6 +104,7 @@ export const productSchema = z.object({
   downloadType: z.enum(['external', 'upload']),
   downloadUrl: z.string().trim(),
   fileName: z.string().trim(),
+  releaseAt: z.string().trim(),
 })
   .refine((data) => data.originalPrice === 0 || data.originalPrice > data.price, {
     message: 'Harga coret harus lebih besar dari harga jual',
@@ -115,13 +116,7 @@ export const productSchema = z.object({
       /^https?:\/\/.+\..+/.test(data.downloadUrl),
     { message: 'Masukkan URL valid, diawali https://', path: ['downloadUrl'] },
   )
-  .refine(
-    (data) => data.downloadType !== 'upload' || data.fileName.length > 0,
-    {
-      message: 'Unggah file produk terlebih dahulu',
-      path: ['fileName'],
-    },
-  )
+
 
 export type ProductValues = z.infer<typeof productSchema>
 

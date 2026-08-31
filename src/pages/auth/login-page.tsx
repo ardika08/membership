@@ -8,6 +8,7 @@ import { AuthShell } from '@/components/features/auth-shell'
 import { Button } from '@/components/ui/button'
 import { TextInput } from '@/components/ui/form-field'
 import { useLogin } from '@/hooks/use-auth'
+import { IS_MOCK_API } from '@/api/services'
 import { loginSchema, type LoginValues } from '@/lib/validations'
 
 export default function LoginPage() {
@@ -93,31 +94,33 @@ export default function LoginPage() {
         </Button>
       </form>
 
-      <div className="border-border mt-6 rounded-xl border border-dashed p-3.5">
-        <p className="text-muted-foreground mb-2.5 text-xs">
-          Mode demo — isi kredensial contoh:
-        </p>
-        <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="flex-1"
-            onClick={() => fillDemo('member')}
-          >
-            Sebagai Member
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="flex-1"
-            onClick={() => fillDemo('admin')}
-          >
-            Sebagai Admin
-          </Button>
+      {IS_MOCK_API && (
+        <div className="border-border mt-6 rounded-xl border border-dashed p-3.5">
+          <p className="text-muted-foreground mb-2.5 text-xs">
+            Mode demo — isi kredensial contoh:
+          </p>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="flex-1"
+              onClick={() => fillDemo('member')}
+            >
+              Sebagai Member
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="flex-1"
+              onClick={() => fillDemo('admin')}
+            >
+              Sebagai Admin
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </AuthShell>
   )
 }
