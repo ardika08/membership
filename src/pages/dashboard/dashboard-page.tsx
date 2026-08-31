@@ -190,16 +190,18 @@ export default function DashboardPage() {
                 <ArrowRight />
               </DomainLink>
             </Button>
-              <Button asChild variant="outline">
-                <a
-                  href={TELEGRAM_GROUP_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Send />
-                  Join Grup Support
-                </a>
-              </Button>
+              {paidTransactions.length > 0 && (
+                <Button asChild variant="outline">
+                  <a
+                    href={TELEGRAM_GROUP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Send />
+                    Join Grup Support
+                  </a>
+                </Button>
+              )}
             </div>
           </div>
         </div>
