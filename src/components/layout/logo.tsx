@@ -21,8 +21,13 @@ export function Logo({
       )}
       aria-label={APP_NAME}
     >
-      <span className="from-primary to-chart-4 shadow-soft flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-sm font-bold text-white transition-transform duration-200 group-hover:scale-105">
-        G
+      <span className="shadow-soft flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white transition-transform duration-200 group-hover:scale-105">
+        <img
+          src="/Loggrafista-01.png"
+          alt=""
+          className="size-full object-contain"
+          aria-hidden="true"
+        />
       </span>
       {showText && (
         <span className="text-[15px] leading-none font-semibold tracking-tight">
