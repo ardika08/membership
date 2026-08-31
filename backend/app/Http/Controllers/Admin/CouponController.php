@@ -86,7 +86,7 @@ class CouponController extends Controller
             $out['min_purchase'] = $data['minPurchase'] ?? 0;
         }
         if (array_key_exists('maxDiscount', $data)) {
-            $out['max_discount'] = $data['maxDiscount'] ?? null;
+            $out['max_discount'] = !empty($data['maxDiscount']) ? $data['maxDiscount'] : null;
         }
         if (array_key_exists('expiresAt', $data)) {
             $out['expires_at'] = $data['expiresAt'];

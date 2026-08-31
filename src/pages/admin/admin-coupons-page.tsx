@@ -129,9 +129,9 @@ function CouponFormDialog({
       value: values.value,
       minPurchase: values.minPurchase,
       maxDiscount:
-        values.type === 'percentage' && values.maxDiscount > 0
+        values.type === 'percentage'
           ? values.maxDiscount
-          : undefined,
+          : 0,
       expiresAt: new Date(`${values.expiresAt}T23:59:59`).toISOString(),
       description: values.description.trim(),
     }
