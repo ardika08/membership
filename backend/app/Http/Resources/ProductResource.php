@@ -21,7 +21,7 @@ class ProductResource extends JsonResource
             'releaseAt' => $this->release_at?->toIso8601String(),
             'downloadType' => $this->download_type,
             'downloadUrl' => $this->when(
-                $request->user()?->isAdmin(),
+                $request->user('sanctum')?->isAdmin(),
                 fn () => $this->download_url,
             ),
             'fileName' => $this->file_name,
