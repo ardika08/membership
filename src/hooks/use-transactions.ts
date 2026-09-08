@@ -38,6 +38,10 @@ export function useAdminTransactions() {
   return useQuery({
     queryKey: transactionKeys.admin,
     queryFn: fetchAdminTransactions,
+    // Selama ada transaksi pending, refresh berkala agar status mengikuti
+    // kondisi terbaru dari Mayar (sinkronisasi di backend tiap fetch).
+    refetchInterval: (query) =>
+      query.state.data?.some((t) => t.status === 'pending') ? 10000 : false,
   })
 }
 
