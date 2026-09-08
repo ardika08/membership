@@ -15,10 +15,9 @@ class UserController extends Controller
     {
         $users = User::query()
             ->where('role', 'member')
+            ->withSum(['transactions as total_spent' => fn ($query) => $query
+                ->where('status', 'paid')], 'amount')
             ->withCount([
-                'transactions as total_spent' => fn ($query) => $query
-                    ->where('status', 'paid')
-                    ->selectRaw('COALESCE(SUM(amount), 0)'),
                 'ownedProducts as products_owned' => fn ($query) => $query->where('status', 'active'),
             ])
             ->orderByDesc('created_at')
