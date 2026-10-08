@@ -84,6 +84,15 @@ export default function LoginPage() {
           {...register('password')}
         />
 
+        <div className="flex justify-end">
+          <Link
+            to="/forgot-password"
+            className="text-muted-foreground hover:text-foreground text-[13px] underline-offset-4 hover:underline"
+          >
+            Lupa kata sandi?
+          </Link>
+        </div>
+
         <Button
           type="submit"
           size="lg"

@@ -7,6 +7,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MyProductController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PointController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -23,6 +24,8 @@ use Illuminate\Support\Facades\Route;
 // Publik
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
+Route::post('/reset-password', [PasswordResetController::class, 'reset']);
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{idOrSlug}', [ProductController::class, 'show']);
 Route::get('/categories', [CategoryController::class, 'index']);

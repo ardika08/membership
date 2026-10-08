@@ -164,6 +164,36 @@ export async function register(
   return { user, token: `mock-token-${user.id}` }
 }
 
+export interface ResetPasswordPayload {
+  email: string
+  token: string
+  password: string
+  passwordConfirmation: string
+}
+
+export async function forgotPassword(email: string): Promise<void> {
+  if (!USE_MOCK) {
+    await apiClient.post('/forgot-password', { email })
+    return
+  }
+  await sleep(LATENCY)
+}
+
+export async function resetPassword(
+  payload: ResetPasswordPayload,
+): Promise<void> {
+  if (!USE_MOCK) {
+    await apiClient.post('/reset-password', {
+      email: payload.email,
+      token: payload.token,
+      password: payload.password,
+      password_confirmation: payload.passwordConfirmation,
+    })
+    return
+  }
+  await sleep(LATENCY)
+}
+
 export async function logoutRequest(): Promise<void> {
   if (!USE_MOCK) {
     await apiClient.post('/logout')

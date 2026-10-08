@@ -4,11 +4,14 @@ import { toast } from 'sonner'
 
 import { getErrorMessage } from '@/api/client'
 import {
+  forgotPassword as forgotPasswordRequest,
   login as loginRequest,
   logoutRequest,
   register as registerRequest,
+  resetPassword as resetPasswordRequest,
   type LoginPayload,
   type RegisterPayload,
+  type ResetPasswordPayload,
 } from '@/api/services'
 import { useAuthStore } from '@/store/authStore'
 
@@ -68,6 +71,37 @@ export function useRegister() {
     },
     onError: (error) => {
       toast.error('Registrasi gagal', { description: getErrorMessage(error) })
+    },
+  })
+}
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: (email: string) => forgotPasswordRequest(email),
+    onError: (error) => {
+      toast.error('Gagal mengirim tautan', {
+        description: getErrorMessage(error),
+      })
+    },
+  })
+}
+
+export function useResetPassword() {
+  const navigate = useNavigate()
+
+  return useMutation({
+    mutationFn: (payload: ResetPasswordPayload) =>
+      resetPasswordRequest(payload),
+    onSuccess: () => {
+      toast.success('Kata sandi diperbarui', {
+        description: 'Silakan masuk dengan kata sandi baru kamu.',
+      })
+      navigate('/login', { replace: true })
+    },
+    onError: (error) => {
+      toast.error('Gagal mengubah kata sandi', {
+        description: getErrorMessage(error),
+      })
     },
   })
 }

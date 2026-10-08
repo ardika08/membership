@@ -13,6 +13,31 @@ export const loginSchema = z.object({
 
 export type LoginValues = z.infer<typeof loginSchema>
 
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email wajib diisi')
+    .email('Format email tidak valid'),
+})
+
+export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>
+
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, 'Kata sandi baru minimal 8 karakter')
+      .regex(/[a-zA-Z]/, 'Sertakan minimal satu huruf')
+      .regex(/[0-9]/, 'Sertakan minimal satu angka'),
+    passwordConfirmation: z.string().min(1, 'Konfirmasi kata sandi wajib diisi'),
+  })
+  .refine((data) => data.password === data.passwordConfirmation, {
+    message: 'Konfirmasi kata sandi tidak cocok',
+    path: ['passwordConfirmation'],
+  })
+
+export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>
+
 export const registerSchema = z
   .object({
     name: z
