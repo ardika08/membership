@@ -96,7 +96,9 @@ export default function ProductDetailPage() {
   const discount = computeDiscountPercent(product.price, product.originalPrice)
   const releaseAt = product.releaseAt ? new Date(product.releaseAt) : null
   const isPreOrder = Boolean(releaseAt && releaseAt > new Date())
-  const hasFile = product.fileSize > 0 || Boolean(product.downloadUrl)
+  const hasFile =
+    product.fileSize > 0 ||
+    Boolean(product.isDownloadable ?? product.downloadUrl)
 
   const handleBuy = () => {
     if (!isAuthenticated) {

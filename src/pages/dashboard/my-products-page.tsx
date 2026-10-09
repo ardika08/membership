@@ -26,6 +26,10 @@ function OwnedCard({ item, index }: { item: OwnedProduct; index: number }) {
   const isActive = item.status === 'active'
   const releaseAt = item.product.releaseAt ? new Date(item.product.releaseAt) : null
   const isPreOrder = Boolean(releaseAt && releaseAt > new Date())
+  // Member tidak menerima `downloadUrl` (rahasia), jadi pakai flag `isDownloadable`.
+  // Fallback ke downloadUrl agar data mock/demo tetap berfungsi.
+  const canDownload =
+    item.product.isDownloadable ?? Boolean(item.product.downloadUrl)
 
   return (
     <motion.div
@@ -81,7 +85,7 @@ function OwnedCard({ item, index }: { item: OwnedProduct; index: number }) {
           <div className="mt-auto flex gap-2 pt-1">
             <Button
               className="flex-1"
-              disabled={!isActive || isPreOrder || !item.product.downloadUrl}
+              disabled={!isActive || isPreOrder || !canDownload}
               loading={download.isPending && download.variables === item.id}
               onClick={() => download.mutate(item.id)}
             >

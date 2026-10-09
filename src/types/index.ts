@@ -32,7 +32,9 @@ export interface Product {
   isActive?: boolean
   /** Sumber unduhan member. Tanpa ini, produk belum bisa diunduh. */
   downloadType?: DownloadType
-  /** URL eksternal (Google Drive dkk.) atau objectURL/signed URL hasil upload. */
+  /** Apakah sumber unduhan sudah dikonfigurasi (tanpa membocorkan URL-nya). */
+  isDownloadable?: boolean
+  /** URL eksternal (Google Drive dkk.) atau objectURL/signed URL hasil upload. Hanya untuk admin. */
   downloadUrl?: string
   /** Nama file untuk mode upload. */
   fileName?: string

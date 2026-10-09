@@ -20,6 +20,9 @@ class ProductResource extends JsonResource
             'isActive' => $this->is_active,
             'releaseAt' => $this->release_at?->toIso8601String(),
             'downloadType' => $this->download_type,
+            // Flag non-sensitif: member boleh tahu produk punya sumber unduhan,
+            // tanpa membocorkan URL-nya (URL asli hanya untuk admin).
+            'isDownloadable' => (bool) $this->download_url,
             'downloadUrl' => $this->when(
                 $request->user('sanctum')?->isAdmin(),
                 fn () => $this->download_url,
